@@ -1,11 +1,14 @@
-import { useEffect, useRef } from "react";
-import { Phone, Clock, Users } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Phone, RefreshCw, User, Bot } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
+import ClientProfileSelector from "@/components/ClientProfileSelector";
 import { useChat } from "@/hooks/useChat";
 
 const Index = () => {
-  const { messages, sendMessage, isLoading } = useChat();
+  const { messages, sendMessage, isLoading, startSimulation } = useChat();
+  const [showSelector, setShowSelector] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -16,64 +19,80 @@ const Index = () => {
     scrollToBottom();
   }, [messages]);
 
+  const handleStartSimulation = (profileIndex?: number) => {
+    setShowSelector(false);
+    startSimulation(profileIndex);
+  };
+
+  const handleRestart = () => {
+    setShowSelector(true);
+  };
+
+  if (showSelector) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-itau-light-orange to-background">
+        <ClientProfileSelector onSelectProfile={handleStartSimulation} isLoading={isLoading} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <div className="hidden lg:flex lg:w-80 bg-secondary text-secondary-foreground flex-col border-r border-border">
         <div className="p-6 border-b border-border/20">
-          <h1 className="text-2xl font-bold mb-2">Central de Atendimento</h1>
+          <h1 className="text-2xl font-bold mb-2">Treinamento de Atendentes</h1>
           <p className="text-sm opacity-90">Banco Itaú</p>
         </div>
-        
+
         <div className="flex-1 p-6 space-y-6">
           <div className="space-y-3">
             <div className="flex items-center gap-3 p-3 bg-background/10 rounded-lg">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-                <Phone className="h-5 w-5 text-primary-foreground" />
+                <User className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <p className="text-sm font-medium">Atendimento Online</p>
-                <p className="text-xs opacity-75">Disponível agora</p>
+                <p className="text-sm font-medium">Você é o Atendente</p>
+                <p className="text-xs opacity-75">Modo treinamento ativo</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3 p-3 bg-background/10 rounded-lg">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-                <Clock className="h-5 w-5 text-primary-foreground" />
+                <Bot className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <p className="text-sm font-medium">Horário</p>
-                <p className="text-xs opacity-75">24 horas, 7 dias</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-background/10 rounded-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-                <Users className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Atendentes</p>
-                <p className="text-xs opacity-75">Especialistas disponíveis</p>
+                <p className="text-sm font-medium">IA é o Cliente</p>
+                <p className="text-xs opacity-75">Com problema a resolver</p>
               </div>
             </div>
           </div>
 
           <div className="pt-6 border-t border-border/20">
-            <h3 className="font-semibold mb-3 text-sm">Dúvidas Frequentes</h3>
+            <h3 className="font-semibold mb-3 text-sm">Dicas de Atendimento</h3>
             <ul className="space-y-2 text-sm opacity-90">
-              <li>• Saldo e extratos</li>
-              <li>• Cartões de crédito</li>
-              <li>• Empréstimos e financiamentos</li>
-              <li>• Investimentos</li>
-              <li>• Seguros</li>
-              <li>• Abertura de conta</li>
+              <li>• Ouça atentamente o problema</li>
+              <li>• Seja empático e profissional</li>
+              <li>• Ofereça soluções claras</li>
+              <li>• Use o botão de tag para ofertas</li>
+              <li>• Pratique contra-argumentação</li>
+              <li>• Mantenha a calma sempre</li>
             </ul>
           </div>
+
+          <Button
+            onClick={handleRestart}
+            variant="outline"
+            className="w-full bg-background/10 border-border/20 hover:bg-background/20"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Nova Simulação
+          </Button>
         </div>
 
         <div className="p-6 border-t border-border/20">
           <p className="text-xs opacity-75 text-center">
-            © 2024 Banco Itaú. Todos os direitos reservados.
+            © 2024 Banco Itaú. Sistema de Treinamento
           </p>
         </div>
       </div>
@@ -84,12 +103,22 @@ const Index = () => {
         <header className="bg-chat-header-bg text-chat-header-fg p-4 shadow-md">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold">Assistente Virtual Itaú</h2>
-              <p className="text-sm opacity-90">Estamos aqui para ajudar</p>
+              <h2 className="text-xl font-bold">Simulação de Atendimento</h2>
+              <p className="text-sm opacity-90">Você está atendendo um cliente</p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-sm">Online</span>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleRestart}
+                size="sm"
+                variant="secondary"
+                className="lg:hidden"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-sm hidden sm:inline">Simulação ativa</span>
+              </div>
             </div>
           </div>
         </header>
