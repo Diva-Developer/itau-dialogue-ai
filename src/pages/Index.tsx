@@ -92,7 +92,7 @@ const Index = () => {
 
         <div className="p-6 border-t border-border/20">
           <p className="text-xs opacity-75 text-center">
-            © 2024 Banco Itaú. Sistema de Treinamento
+            © 2025 CXTrainer - Sistema de Treinamento da Qualidade
           </p>
         </div>
       </div>
